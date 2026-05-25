@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is retrieval-augmented generation (RAG)?",
+    "ground_truth": "RAG is a pattern that retrieves relevant document chunks and uses them as context for an LLM to generate grounded, cited answers."
+  },
+  {
+    "question": "Why is citation enforcement important in a RAG system?",
+    "ground_truth": "Citation enforcement ensures the system declines to answer when retrieved chunks don't support a response, preventing hallucination of plausible-sounding but unsupported facts."
+  },
+  {
+    "question": "What chunk size and overlap are recommended?",
+    "ground_truth": "Chunks of 500-800 tokens with approximately 100 tokens of overlap to avoid slicing important sentences at boundaries."
+  }
+]

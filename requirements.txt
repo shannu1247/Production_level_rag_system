@@ -1,0 +1,31 @@
+# Core LangChain
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+
+# LangChain provider integrations (from docs.langchain.com/oss/python/integrations/providers/overview)
+langchain-groq>=0.2.0            # Groq LLM (llama-3.3-70b-versatile)
+langchain-huggingface>=0.1.0     # HuggingFace embeddings (BAAI/bge-base-en-v1.5)
+langchain-chroma>=0.2.0          # ChromaDB vector store
+
+# Document loaders / parsers
+pypdf>=4.0.0                     # PDF loading
+unstructured>=0.15.0             # General document parsing
+markdown                         # Markdown support
+beautifulsoup4                   # Web page loading
+requests
+
+# Hybrid retrieval
+rank-bm25>=0.2.2                 # BM25 keyword search
+
+# Cross-encoder reranking (sentence-transformers)
+sentence-transformers>=3.0.0
+torch
+
+# Evaluation
+ragas>=0.2.0                     # RAG evaluation framework
+
+# Utilities
+pyyaml>=6.0                      # Prompt version config
+python-dotenv>=1.0.0
+rich>=13.0.0                     # Pretty console output
