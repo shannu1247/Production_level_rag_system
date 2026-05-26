@@ -10,7 +10,6 @@ on:
 jobs:
   evaluate:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -26,19 +25,13 @@ jobs:
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          python main.py ingest docs/
+        run: python main.py ingest docs/
 
       - name: Run RAG evaluation
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          python main.py evaluate \
-            --dataset eval/golden_dataset.json \
-            --threshold 0.70
-        # Exit code 1 from evaluate.py automatically fails this step,
-        # which fails the PR check — exactly how production AI teams operate.
+        run: python main.py evaluate --dataset eval/golden_dataset.json --threshold 0.70
 
       - name: Upload evaluation results
         if: always()
