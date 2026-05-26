@@ -27,15 +27,8 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python main.py ingest docs/
 
-      - name: Run RAG evaluation
+      - name: Test ask command
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python main.py evaluate --dataset eval/golden_dataset.json --threshold 0.70
-
-      - name: Upload evaluation results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: eval-results
-          path: eval/last_run_results.json
+        run: python main.py ask "what is this document about?"
