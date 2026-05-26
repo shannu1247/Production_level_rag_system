@@ -21,7 +21,7 @@ from rich.console import Console
 
 # LangChain retrievers
 from langchain_community.retrievers import BM25Retriever
-from langchain_community.retrievers.ensemble import EnsembleRetriever
+from langchain.retrievers.ensemble import EnsembleRetriever
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
