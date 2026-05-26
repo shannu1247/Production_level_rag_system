@@ -25,7 +25,7 @@ torch
 
 # Evaluation
 # Evaluation
-ragas==0.2.14
+ragas==0.2.6
 datasets
 
 # Utilities
