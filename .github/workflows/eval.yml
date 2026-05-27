@@ -23,6 +23,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Check versions
+        run: |
+          python -c "import langchain; print('langchain:', langchain.__version__)"
+          python -c "from langchain.retrievers import EnsembleRetriever; print('langchain.retrievers ok')" || python -c "from langchain_community.retrievers import EnsembleRetriever; print('langchain_community.retrievers ok')"
+
       - name: Ingest test documents
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -34,5 +39,3 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python main.py ask "what is this document about?"
-      - name: Debug langchain structure
-        run: python -c "import langchain; import langchain_community; print('langchain version:', langchain.__version__); from langchain_community.retrievers import BM25Retriever; print('BM25 ok'); import subprocess; subprocess.run(['python', '-c', 'import pkgutil; import langchain; [print(m.name) for m in pkgutil.iter_modules(langchain.__path__)]'])"
