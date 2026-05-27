@@ -21,7 +21,6 @@ from rich.console import Console
 
 # LangChain retrievers
 from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers import EnsembleRetriever
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
@@ -73,27 +72,34 @@ def load_vectorstore() -> Chroma:
     )
 
 
-def build_hybrid_retriever(vectorstore: Chroma, all_chunks: List[Document]):
+
+
+def build_hybrid_retriever(vectorstore, all_chunks):
     """
-    Build EnsembleRetriever = BM25 (keyword) + Chroma (semantic).
-    EnsembleRetriever from langchain-community fuses results via RRF.
+    Manual hybrid retrieval: run BM25 and vector search separately,
+    merge results by combining unique docs (replaces EnsembleRetriever).
     """
-    # BM25 retriever over the same corpus
     bm25_retriever = BM25Retriever.from_documents(all_chunks)
     bm25_retriever.k = TOP_K_INITIAL
 
-    # Vector retriever
     vector_retriever = vectorstore.as_retriever(
         search_type="similarity",
         search_kwargs={"k": TOP_K_INITIAL},
     )
 
-    # Ensemble: weighted reciprocal rank fusion
-    hybrid = EnsembleRetriever(
-        retrievers=[bm25_retriever, vector_retriever],
-        weights=[BM25_WEIGHT, VECTOR_WEIGHT],
-    )
-    return hybrid
+    def hybrid_invoke(query):
+        bm25_docs = bm25_retriever.invoke(query)
+        vector_docs = vector_retriever.invoke(query)
+        # Merge, deduplicate by content
+        seen = set()
+        merged = []
+        for doc in bm25_docs + vector_docs:
+            if doc.page_content not in seen:
+                seen.add(doc.page_content)
+                merged.append(doc)
+        return merged[:TOP_K_INITIAL]
+
+    return hybrid_invoke
 
 
 def rerank(query: str, candidates: List[Document]) -> List[Tuple[Document, float]]:
@@ -119,7 +125,7 @@ def retrieve(query: str, vectorstore: Chroma, all_chunks: List[Document]) -> Lis
     hybrid = build_hybrid_retriever(vectorstore, all_chunks)
 
     console.print(f"[cyan]Retrieving for:[/] {query!r}")
-    candidates = hybrid.invoke(query)
+    candidates = hybrid(query)
     console.print(f"  Candidates from hybrid retrieval: [bold]{len(candidates)}[/]")
 
     ranked = rerank(query, candidates)
